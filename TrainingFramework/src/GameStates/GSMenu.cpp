@@ -2,6 +2,7 @@
 
 extern int screenWidth; //need get on Graphic engine
 extern int screenHeight; //need get on Graphic engine
+extern int clickstat;
 
 GSMenu::GSMenu()
 {
@@ -92,10 +93,17 @@ void GSMenu::HandleKeyEvents(int key, bool bIsPressed)
 
 void GSMenu::HandleTouchEvents(int x, int y, bool bIsPressed)
 {
-	for (auto it : m_listButton)
-	{
-		(it)->HandleTouchEvents(x, y, bIsPressed);
-		if ((it)->IsHandle()) break;
+	if (!clickstat) {
+		//do something
+		for (auto it : m_listButton)
+		{
+			(it)->HandleTouchEvents(x, y, bIsPressed);
+			if ((it)->IsHandle()) break;
+		}
+		clickstat = 1;
+	}
+	else {
+		clickstat = 0;
 	}
 }
 

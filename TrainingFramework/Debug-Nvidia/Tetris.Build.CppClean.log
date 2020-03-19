@@ -1,9 +1,9 @@
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\vc140.pdb
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\vc140.idb
-c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\application.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\resourcemanagers.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\font.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\gamebutton.obj
+c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\o_block.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\sprite2d.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\camera.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\sprite3d.obj
@@ -20,6 +20,8 @@ c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\de
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\gsplay.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\gssetting.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\trainingframework.obj
+c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\application.obj
+c:\users\fappe\documents\visual studio 2015\projects\tetris\trainingframework\debug-nvidia\timer.obj
 c:\users\fappe\documents\visual studio 2015\projects\tetris\bin-nvidia\tetris.ilk
 c:\users\fappe\documents\visual studio 2015\projects\tetris\bin-nvidia\tetris.exe
 c:\users\fappe\documents\visual studio 2015\projects\tetris\bin-nvidia\tetris.pdb

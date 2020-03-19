@@ -3,6 +3,8 @@
 #include "GameButton.h"
 
 class SpriteAnimation;
+const int H = 22;
+const int W = 10;
 
 class GSPlay :
 	public GameStateBase
@@ -26,13 +28,14 @@ public:
 
 	
 	void SetNewPostionForBullet();
-
-private:
+	
+private:	
+	std::shared_ptr<Sprite2D> m_board[H][W];
 	std::shared_ptr<Sprite2D> m_BackGround;
 	std::shared_ptr<Text>  m_score;
 	std::vector < std::shared_ptr<Sprite2D>> m_listSprite2D;
 	std::vector < std::shared_ptr<SpriteAnimation>> m_listSpriteAnimations;
 	std::list<std::shared_ptr<GameButton>>	m_listButton;
-
+	std::shared_ptr<Sprite2D> m_nextBlock;
 };
 

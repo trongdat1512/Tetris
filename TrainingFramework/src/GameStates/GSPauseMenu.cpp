@@ -2,6 +2,7 @@
 
 extern int screenWidth; //need get on Graphic engine
 extern int screenHeight; //need get on Graphic engine
+extern int clickstat;
 
 GSPauseMenu::GSPauseMenu()
 {
@@ -32,7 +33,7 @@ void GSPauseMenu::Init()
 	button->Set2DPosition(screenWidth / 2, 200);
 	button->SetSize(200, 50);
 	button->SetOnClick([]() {
-		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_Play);
+		GameStateMachine::GetInstance()->PopState();
 	});
 	m_listButton.push_back(button);
 	
@@ -71,10 +72,17 @@ void GSPauseMenu::HandleKeyEvents(int key, bool bIsPressed)
 
 void GSPauseMenu::HandleTouchEvents(int x, int y, bool bIsPressed)
 {
-	for (auto it : m_listButton)
-	{
-		(it)->HandleTouchEvents(x, y, bIsPressed);
-		if ((it)->IsHandle()) break;
+	if (!clickstat) {
+		//do something
+		for (auto it : m_listButton)
+		{
+			(it)->HandleTouchEvents(x, y, bIsPressed);
+			if ((it)->IsHandle()) break;
+		}
+		clickstat = 1;
+	}
+	else {
+		clickstat = 0;
 	}
 }
 

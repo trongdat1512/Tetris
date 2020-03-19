@@ -1,10 +1,12 @@
 #pragma once
 #include "gamestatebase.h"
 
+
 class GSIntro :
 	public GameStateBase
 {
 public:
+	
 	GSIntro();
 	~GSIntro();
 
