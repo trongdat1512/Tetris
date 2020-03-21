@@ -9,6 +9,7 @@
 #include "Text.h"
 #include "SpriteAnimation.h"
 #include <ctime>
+#include <string>
 
 extern int screenWidth; //need get on Graphic engine
 extern int screenHeight; //need get on Graphic engine
@@ -16,7 +17,7 @@ extern int clickstat;
 int board[H][W];
 int landed[H][W];
 int block[4][4];
-int x, y;
+int x, y, lastRow, score;
 bool success;
 int nextBlockType = rand() % 7; 
 int block_list[7][4][4] =
@@ -66,12 +67,16 @@ int block_list[7][4][4] =
 };
 bool makeBlock();
 bool moveBlock(int x2, int y2);
+bool moveToBottom();
 bool rotateBlock();
 bool isCollide(int x2, int y2);
+bool isFilled(int x);
+void clearLine(int x);
 
 GSPlay::GSPlay()
 {
-	for (int i = 0; i < H + 1; i++) {
+	score = 0;
+	for (int i = 0; i < H; i++) {
 		for (int j = 0; j < W; j++) {
 			board[i][j] = 0;
 			landed[i][j] = 0;
@@ -172,7 +177,7 @@ void GSPlay::Init()
 	//text game score
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("telelower");
-	m_score = std::make_shared< Text>(shader, font, "0", TEXT_COLOR::GREEN, 0.7);
+	m_score = std::make_shared< Text>(shader, font, std::to_string(score), TEXT_COLOR::GREEN, 0.7);
 	m_score->Set2DPosition(Vector2(425, 98));
 }
 
@@ -203,11 +208,34 @@ void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
 	if (!clickstat) {
 		//do something
 		switch (key) {
+		case 32:
+			success = moveToBottom();
+			if (success) {
+				for (int i = 0; i < H; i++) {
+					for (int j = 0; j < W; j++) {
+						landed[i][j] = board[i][j];
+					}
+				}
+				for (int row = lastRow - 3; row <= lastRow; row++) {
+					if (isFilled(row)) {
+						clearLine(row);
+						score++;
+					}
+				}
+				success = makeBlock();
+			}
+			break;
 		case 40:
 			if (isCollide(x, y + 1)) {
 				for (int i = 0; i < H; i++) {
 					for (int j = 0; j < W; j++) {
 						landed[i][j] = board[i][j];
+					}
+				}
+				for (int row = lastRow - 3; row <= lastRow; row++) {
+					if (isFilled(row)) {
+						clearLine(row);
+						score++;
 					}
 				}
 				success = makeBlock();
@@ -302,6 +330,10 @@ void GSPlay::Update(float deltaTime)
 			}
 		}
 	}
+	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
+	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("telelower");
+	m_score = std::make_shared<Text>(shader, font, std::to_string(score), TEXT_COLOR::GREEN, 0.7);
+	m_score->Set2DPosition(Vector2(425, 98));
 }
 
 void GSPlay::Draw()
@@ -363,7 +395,14 @@ bool moveBlock(int x2, int y2) {
 		success = true;
 	}
 	else success = false;
+	lastRow = y + 3;
 	return success;
+}
+
+bool moveToBottom() {
+	int y2 = y;
+	while (!isCollide(x, y2)) y2++;
+	return moveBlock(x, y2-1);
 }
 
 bool rotateBlock() {
@@ -405,4 +444,21 @@ bool isCollide(int x2, int y2) {
 		}
 	}
 	return false;
+}
+
+bool isFilled(int x) {
+	bool isFilled = true;
+	for (int i = 0; i < W; i++) {
+		if (landed[x][i] == 0) isFilled = false;
+	}
+	return isFilled;
+}
+
+void clearLine(int x) {
+	for (int i = x; i > 0; i--) {
+		for (int j = 0; j < W; j++) {
+			landed[i][j] = landed[i - 1][j];
+			board[i][j] = board[i - 1][j];
+		}
+	}
 }
