@@ -3,7 +3,7 @@
 #include "GameButton.h"
 
 class SpriteAnimation;
-const int H = 22;
+const int H = 23;
 const int W = 10;
 
 class GSPlay :

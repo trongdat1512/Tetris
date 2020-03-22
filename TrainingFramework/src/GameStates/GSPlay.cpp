@@ -18,8 +18,8 @@ int board[H][W];
 int landed[H][W];
 int block[4][4];
 int x, y, lastRow, score;
-bool success;
-int nextBlockType = rand() % 7; 
+bool success, isGameOver;
+int nextBlockType; 
 int block_list[7][4][4] =
 {
 	{
@@ -75,6 +75,8 @@ void clearLine(int x);
 
 GSPlay::GSPlay()
 {
+	nextBlockType = rand() % 7;
+	isGameOver = false;
 	score = 0;
 	for (int i = 0; i < H; i++) {
 		for (int j = 0; j < W; j++) {
@@ -100,8 +102,8 @@ void GSPlay::Init()
 	for (int row = 0; row < H; row++) {
 		for (int col = 0; col < W; col++) {
 			m_board[row][col] = std::make_shared<Sprite2D>(model, shader, texture);
-			m_board[row][col]->Set2DPosition(30.4 + col*32.8, 61.2 + row*32.8);
-			if (board[row][col] == 1 && row > 0) {				
+			m_board[row][col]->Set2DPosition(30.4 + col*32.8, 28.4 + row*32.8);
+			if (board[row][col] == 1 && row > 1) {				
 				m_board[row][col]->SetSize(32.8, 32.8);
 			}
 			else m_board[row][col]->SetSize(0, 0);
@@ -179,6 +181,7 @@ void GSPlay::Init()
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("telelower");
 	m_score = std::make_shared< Text>(shader, font, std::to_string(score), TEXT_COLOR::GREEN, 0.7);
 	m_score->Set2DPosition(Vector2(425, 98));
+
 }
 
 void GSPlay::Exit()
@@ -200,7 +203,7 @@ void GSPlay::Resume()
 
 void GSPlay::HandleEvents()
 {
-
+	
 }
 
 void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
@@ -278,6 +281,10 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 
 void GSPlay::Update(float deltaTime)
 {
+	if (isGameOver) {
+		GameStateMachine::GetInstance()->PopState();
+		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
+	}
 	for (auto obj : m_listSpriteAnimations)
 	{
 		obj->Update(deltaTime);
@@ -313,7 +320,6 @@ void GSPlay::Update(float deltaTime)
 		texture = ResourceManagers::GetInstance()->GetTexture("l");
 		break;
 	}
-
 	m_nextBlock = std::make_shared<Sprite2D>(model, shader, texture);
 	m_nextBlock->Set2DPosition(415, 200);
 	m_nextBlock->SetSize(60, 60);
@@ -322,8 +328,8 @@ void GSPlay::Update(float deltaTime)
 		for (int row = 0; row < H; row++) {
 			for (int col = 0; col < W; col++) {
 				m_board[row][col] = std::make_shared<Sprite2D>(model, shader, texture);
-				m_board[row][col]->Set2DPosition(30.4 + col*32.8, 61.2 + row*32.8);
-				if (board[row][col] == 1 && row > 0) {
+				m_board[row][col]->Set2DPosition(30.4 + col*32.8, 28.4 + row*32.8);
+				if (board[row][col] == 1 && row > 1) {
 					m_board[row][col]->SetSize(32.8, 32.8);
 				}
 				else m_board[row][col]->SetSize(0, 0);
@@ -349,6 +355,10 @@ void GSPlay::Draw()
 	{
 		obj->Draw();
 	}
+	for (auto obj : m_listSprite2D)
+	{
+		obj->Draw();
+	}
 	for (auto it : m_listButton)
 	{
 		it->Draw();
@@ -365,6 +375,12 @@ void GSPlay::SetNewPostionForBullet()
 bool makeBlock() {
 	x = 4;
 	y = 0;
+	int tmp[4][4];
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			tmp[i][j] = board[i][j + 4];
+		}
+	}
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			block[i][j] = block_list[nextBlockType][i][j];
@@ -372,7 +388,17 @@ bool makeBlock() {
 		}
 	}
 	nextBlockType = rand() % 7;
+	if (isCollide(4, 0)) {
+		isGameOver = true;
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				board[i][j + 4] = tmp[i][j];
+			}
+		}
+		success =  false;
+	}
 	success = true;
+
 	return success;
 }
 

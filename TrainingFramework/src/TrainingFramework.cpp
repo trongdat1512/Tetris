@@ -2,6 +2,7 @@
 #include "Shaders.h"
 #include "Application.h"
 #include "utilities.h" 
+#include <ctime>
 
 GLint screenWidth = 480;
 GLint screenHeight = 800;
@@ -42,7 +43,7 @@ void CleanUp()
 
 GLint _tmain(GLint argc, _TCHAR* argv[])
 {
-
+	srand(time(NULL));
 	ESContext esContext;
 	esInitContext(&esContext);
 	esCreateWindow(&esContext, "Demo Game", screenWidth, screenHeight, ES_WINDOW_RGB | ES_WINDOW_DEPTH);

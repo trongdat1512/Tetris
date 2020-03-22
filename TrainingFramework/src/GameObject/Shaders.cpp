@@ -18,7 +18,6 @@ Shaders::~Shaders()
 
 GLint Shaders::Init(const std::string& fileVertexShader, const std::string& fileFragmentShader)
 {
-	LOGI("Compile Shader:%s\t%s\t\t\n",fileVertexShader,fileFragmentShader);
 	vertexShader = esLoadShader(GL_VERTEX_SHADER, fileVertexShader);
 	if ( vertexShader == 0 )
 	{
@@ -41,7 +40,6 @@ GLint Shaders::Init(const std::string& fileVertexShader, const std::string& file
 	iTextureLoc[2]  = glGetUniformLocation(program,"u_texture2");
 	iTextureLoc[3]  = glGetUniformLocation(program,"u_texture3");
 	iTextureLoc[4]  = glGetUniformLocation(program,"u_texture4");
-	LOGI("Done %s %s \n",fileVertexShader,fileFragmentShader);
 	return 0;
 }
 
