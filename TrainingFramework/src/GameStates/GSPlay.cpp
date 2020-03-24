@@ -8,7 +8,8 @@
 #include "Sprite3D.h"
 #include "Text.h"
 #include "SpriteAnimation.h"
-#include <ctime>
+#include <thread>
+#include <windows.h>
 #include <string>
 
 extern int screenWidth; //need get on Graphic engine
@@ -20,6 +21,7 @@ int block[4][4];
 int x, y, lastRow, score;
 bool success, isGameOver;
 int nextBlockType; 
+float deltaFallTime = 0.0;
 int block_list[7][4][4] =
 {
 	{
@@ -72,6 +74,7 @@ bool rotateBlock();
 bool isCollide(int x2, int y2);
 bool isFilled(int x);
 void clearLine(int x);
+void blockFall();
 
 GSPlay::GSPlay()
 {
@@ -222,7 +225,6 @@ void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
 				for (int row = lastRow - 3; row <= lastRow; row++) {
 					if (isFilled(row)) {
 						clearLine(row);
-						score++;
 					}
 				}
 				success = makeBlock();
@@ -238,7 +240,6 @@ void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
 				for (int row = lastRow - 3; row <= lastRow; row++) {
 					if (isFilled(row)) {
 						clearLine(row);
-						score++;
 					}
 				}
 				success = makeBlock();
@@ -281,10 +282,52 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 
 void GSPlay::Update(float deltaTime)
 {
+	//Block auto fall
+	deltaFallTime += deltaTime;
+	if (score < 10) {
+		if (deltaFallTime > 1.5) {
+			blockFall();
+			deltaFallTime = 0.0;
+		}
+	}
+	else if (score >= 10 && score < 20) {
+		if (deltaFallTime > 1.0) {
+			blockFall();
+			deltaFallTime = 0.0;
+		}
+	}
+	else if (score >= 20 && score < 30) {
+		if (deltaFallTime > 0.7) {
+			blockFall();
+			deltaFallTime = 0.0;
+		}
+	}
+	else if (score >= 30 && score < 40) {
+		if (deltaFallTime > 0.5) {
+			blockFall();
+			deltaFallTime = 0.0;
+		}
+	}
+	else if (score >= 40 && score < 50) {
+		if (deltaFallTime > 0.3) {
+			blockFall();
+			deltaFallTime = 0.0;
+		}
+	}
+	else if (score >= 50) {
+		if (deltaFallTime > 0.15) {
+			blockFall();
+			deltaFallTime = 0.0;
+		}
+	}
+
+	//Game over
 	if (isGameOver) {
 		GameStateMachine::GetInstance()->PopState();
 		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 	}
+
+	//Update
 	for (auto obj : m_listSpriteAnimations)
 	{
 		obj->Update(deltaTime);
@@ -323,6 +366,8 @@ void GSPlay::Update(float deltaTime)
 	m_nextBlock = std::make_shared<Sprite2D>(model, shader, texture);
 	m_nextBlock->Set2DPosition(415, 200);
 	m_nextBlock->SetSize(60, 60);
+
+	//Update board
 	if (success) {
 		texture = ResourceManagers::GetInstance()->GetTexture("dot");
 		for (int row = 0; row < H; row++) {
@@ -463,16 +508,17 @@ bool rotateBlock() {
 }
 
 bool isCollide(int x2, int y2) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 3; i >= 0; i--) {
 		for (int j = 0; j < 4; j++) {
 			if (block[i][j] == 1 && (y2 + i >= H || x2 + j < 0 || x2 + j >= W)) return true;
-			if (block[i][j] + landed[y2 + i][x2 + j] > 1) return true;
+			if (block[i][j] == 1 && landed[y2 + i][x2 + j] == 1) return true;
 		}
 	}
 	return false;
 }
 
 bool isFilled(int x) {
+	if (x >= 23) return false;
 	bool isFilled = true;
 	for (int i = 0; i < W; i++) {
 		if (landed[x][i] == 0) isFilled = false;
@@ -486,5 +532,25 @@ void clearLine(int x) {
 			landed[i][j] = landed[i - 1][j];
 			board[i][j] = board[i - 1][j];
 		}
+	}
+	score++;
+}
+
+void blockFall() {
+	if (isCollide(x, y + 1)) {
+		for (int i = 0; i < H; i++) {
+			for (int j = 0; j < W; j++) {
+				landed[i][j] = board[i][j];
+			}
+		}
+		for (int row = lastRow - 3; row <= lastRow; row++) {
+			if (isFilled(row)) {
+				clearLine(row);
+			}
+		}
+		makeBlock();
+	}
+	else {
+		moveBlock(x, y + 1);
 	}
 }

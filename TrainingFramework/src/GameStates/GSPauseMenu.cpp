@@ -19,7 +19,7 @@ GSPauseMenu::~GSPauseMenu()
 void GSPauseMenu::Init()
 {
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_play");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("setting_background");
 
 	//BackGround
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -30,7 +30,7 @@ void GSPauseMenu::Init()
 	//resume button
 	texture = ResourceManagers::GetInstance()->GetTexture("resume_btn");
 	std::shared_ptr<GameButton> button = std::make_shared<GameButton>(model, shader, texture);
-	button->Set2DPosition(screenWidth / 2, 200);
+	button->Set2DPosition(screenWidth / 2, 400);
 	button->SetSize(200, 50);
 	button->SetOnClick([]() {
 		GameStateMachine::GetInstance()->PopState();
